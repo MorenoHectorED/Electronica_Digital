@@ -1,0 +1,134 @@
+import javax.swing.*;
+import java.awt.*;
+
+public class Conversor extends JFrame {
+
+    private JTextField txtNumero;
+    private JComboBox<String> origen;
+    private JComboBox<String> destino;
+    private JTextArea resultado;
+
+    public Conversor() {
+
+        setTitle("Conversor de Sistemas Numéricos");
+        setSize(500, 350);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(4, 2, 10, 10));
+
+        panel.add(new JLabel("Número:"));
+        txtNumero = new JTextField();
+        panel.add(txtNumero);
+
+        panel.add(new JLabel("Sistema origen:"));
+        origen = new JComboBox<>(new String[]{
+                "Decimal",
+                "Binario",
+                "Octal",
+                "Hexadecimal"
+        });
+        panel.add(origen);
+
+        panel.add(new JLabel("Sistema destino:"));
+        destino = new JComboBox<>(new String[]{
+                "Decimal",
+                "Binario",
+                "Octal",
+                "Hexadecimal"
+        });
+        panel.add(destino);
+
+        JButton btnConvertir = new JButton("Convertir");
+        JButton btnLimpiar = new JButton("Limpiar");
+
+        panel.add(btnConvertir);
+        panel.add(btnLimpiar);
+
+        resultado = new JTextArea();
+        resultado.setEditable(false);
+
+        add(panel, BorderLayout.NORTH);
+        add(new JScrollPane(resultado), BorderLayout.CENTER);
+
+        btnConvertir.addActionListener(e -> convertir());
+
+        btnLimpiar.addActionListener(e -> {
+            txtNumero.setText("");
+            resultado.setText("");
+        });
+    }
+
+    private void convertir() {
+
+        try {
+
+            String numero = txtNumero.getText().trim();
+            int decimal = 0;
+
+            switch (origen.getSelectedIndex()) {
+
+                case 0:
+                    decimal = Integer.parseInt(numero);
+                    break;
+
+                case 1:
+                    decimal = Integer.parseInt(numero, 2);
+                    break;
+
+                case 2:
+                    decimal = Integer.parseInt(numero, 8);
+                    break;
+
+                case 3:
+                    decimal = Integer.parseInt(numero, 16);
+                    break;
+            }
+
+            String conversion = "";
+
+            switch (destino.getSelectedIndex()) {
+
+                case 0:
+                    conversion = String.valueOf(decimal);
+                    break;
+
+                case 1:
+                    conversion = Integer.toBinaryString(decimal);
+                    break;
+
+                case 2:
+                    conversion = Integer.toOctalString(decimal);
+                    break;
+
+                case 3:
+                    conversion = Integer.toHexString(decimal).toUpperCase();
+                    break;
+            }
+
+            resultado.setText(
+                    "Número ingresado: " + numero +
+                    "\nSistema origen: " + origen.getSelectedItem() +
+                    "\nSistema destino: " + destino.getSelectedItem() +
+                    "\n\nResultado: " + conversion
+            );
+
+        } catch (Exception e) {
+
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Número inválido para el sistema seleccionado.",
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
+    }
+
+    public static void main(String[] args) {
+
+        SwingUtilities.invokeLater(() -> {
+            new Conversor().setVisible(true);
+        });
+    }
+}
